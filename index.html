@@ -4,6 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pricing Calculator</title>
+    <script>
+        // Define functions FIRST before HTML loads
+        function clearRelatedFields(fieldName) {
+            const fields = ['margin', 'markup', 'profit', 'priceNoVat', 'priceWithVat'];
+            fields.forEach(field => {
+                if (field !== fieldName) {
+                    const element = document.getElementById(field);
+                    if (element) element.value = '';
+                }
+            });
+        }
+    </script>
     <style>
         * {
             margin: 0;
@@ -365,7 +377,7 @@
                     <label><span class="field-number">2</span>Margin % <span class="editable-indicator"></span></label>
                     <div class="input-wrapper">
                         <button class="increment-btn minus" onclick="decrementField('margin')">−</button>
-                        <input type="number" id="margin" placeholder="0.00" step="0.01" inputmode="decimal">
+                        <input type="number" id="margin" placeholder="0.00" step="0.01" inputmode="decimal" onfocus="clearRelatedFields('margin')">
                         <button class="increment-btn" onclick="incrementField('margin')">+</button>
                     </div>
                 </div>
@@ -374,7 +386,7 @@
                     <label><span class="field-number">3</span>Markup % <span class="editable-indicator"></span></label>
                     <div class="input-wrapper">
                         <button class="increment-btn minus" onclick="decrementField('markup')">−</button>
-                        <input type="number" id="markup" placeholder="0.00" step="0.01" inputmode="decimal">
+                        <input type="number" id="markup" placeholder="0.00" step="0.01" inputmode="decimal" onfocus="clearRelatedFields('markup')">
                         <button class="increment-btn" onclick="incrementField('markup')">+</button>
                     </div>
                 </div>
@@ -383,7 +395,7 @@
                     <label><span class="field-number">4</span>Profit <span class="editable-indicator"></span></label>
                     <div class="input-wrapper">
                         <button class="increment-btn minus" onclick="decrementField('profit')">−</button>
-                        <input type="number" id="profit" placeholder="0.00" step="0.01" inputmode="decimal">
+                        <input type="number" id="profit" placeholder="0.00" step="0.01" inputmode="decimal" onfocus="clearRelatedFields('profit')">
                         <button class="increment-btn" onclick="incrementField('profit')">+</button>
                     </div>
                 </div>
@@ -392,7 +404,7 @@
                     <label><span class="field-number">5</span>Price (no VAT) <span class="editable-indicator"></span></label>
                     <div class="input-wrapper">
                         <button class="increment-btn minus" onclick="decrementField('priceNoVat')">−</button>
-                        <input type="number" id="priceNoVat" placeholder="0.00" step="0.01" inputmode="decimal">
+                        <input type="number" id="priceNoVat" placeholder="0.00" step="0.01" inputmode="decimal" onfocus="clearRelatedFields('priceNoVat')">
                         <button class="increment-btn" onclick="incrementField('priceNoVat')">+</button>
                     </div>
                 </div>
@@ -401,7 +413,7 @@
                     <label><span class="field-number">6</span>Price (with VAT) <span class="editable-indicator"></span></label>
                     <div class="input-wrapper">
                         <button class="increment-btn minus" onclick="decrementField('priceWithVat')">−</button>
-                        <input type="number" id="priceWithVat" placeholder="0.00" step="0.01" inputmode="decimal">
+                        <input type="number" id="priceWithVat" placeholder="0.00" step="0.01" inputmode="decimal" onfocus="clearRelatedFields('priceWithVat')">
                         <button class="increment-btn" onclick="incrementField('priceWithVat')">+</button>
                     </div>
                 </div>
@@ -417,7 +429,7 @@
                         </select>
                         <div class="input-wrapper" style="flex: 1;">
                             <button class="increment-btn minus" onclick="decrementField('vat')">−</button>
-                            <input type="number" id="vat" placeholder="0.00" step="0.01" value="19" inputmode="decimal" onchange="updateVatSelect()">
+                            <input type="number" id="vat" placeholder="0.00" step="0.01" value="19" inputmode="decimal">
                             <button class="increment-btn" onclick="incrementField('vat')">+</button>
                         </div>
                     </div>
@@ -488,7 +500,13 @@
         }
 
         function updateFields(values) {
-            document.getElementById('cost').value = values.cost !== 0 ? formatNumber(values.cost) : '';
+            // Always update Cost field, even if it's 0
+            if (document.getElementById('cost').value === '') {
+                document.getElementById('cost').value = '0.00';
+            } else {
+                document.getElementById('cost').value = formatNumber(values.cost);
+            }
+            
             document.getElementById('margin').value = values.margin !== 0 ? formatNumber(values.margin) : '';
             document.getElementById('markup').value = values.markup !== 0 ? formatNumber(values.markup) : '';
             document.getElementById('profit').value = values.profit !== 0 ? formatNumber(values.profit) : '';
