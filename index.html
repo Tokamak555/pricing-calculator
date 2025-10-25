@@ -7,13 +7,22 @@
     <script>
         // Define functions FIRST before HTML loads
         function clearRelatedFields(fieldName) {
-            const fields = ['margin', 'markup', 'profit', 'priceNoVat', 'priceWithVat'];
-            fields.forEach(field => {
-                if (field !== fieldName) {
-                    const element = document.getElementById(field);
-                    if (element) element.value = '';
-                }
-            });
+            if (fieldName === 'cost') {
+                // When Cost changes, only clear Margin, Markup, Profit
+                // Keep the prices so they can be used for calculation
+                document.getElementById('margin').value = '';
+                document.getElementById('markup').value = '';
+                document.getElementById('profit').value = '';
+            } else {
+                // For other fields, clear everything except the one being edited
+                const fields = ['margin', 'markup', 'profit', 'priceNoVat', 'priceWithVat'];
+                fields.forEach(field => {
+                    if (field !== fieldName) {
+                        const element = document.getElementById(field);
+                        if (element) element.value = '';
+                    }
+                });
+            }
         }
     </script>
     <style>
@@ -368,7 +377,7 @@
                     <label><span class="field-number">1</span>Cost <span class="editable-indicator"></span></label>
                     <div class="input-wrapper">
                         <button class="increment-btn minus" onclick="decrementField('cost')">−</button>
-                        <input type="number" id="cost" placeholder="Enter cost" step="0.01" inputmode="decimal">
+                        <input type="number" id="cost" placeholder="Enter cost" step="0.01" inputmode="decimal" oninput="clearRelatedFields('cost')">
                         <button class="increment-btn" onclick="incrementField('cost')">+</button>
                     </div>
                 </div>
@@ -377,7 +386,7 @@
                     <label><span class="field-number">2</span>Margin % <span class="editable-indicator"></span></label>
                     <div class="input-wrapper">
                         <button class="increment-btn minus" onclick="decrementField('margin')">−</button>
-                        <input type="number" id="margin" placeholder="0.00" step="0.01" inputmode="decimal" onfocus="clearRelatedFields('margin')">
+                        <input type="number" id="margin" placeholder="0.00" step="0.01" inputmode="decimal" oninput="clearRelatedFields('margin')">
                         <button class="increment-btn" onclick="incrementField('margin')">+</button>
                     </div>
                 </div>
@@ -386,7 +395,7 @@
                     <label><span class="field-number">3</span>Markup % <span class="editable-indicator"></span></label>
                     <div class="input-wrapper">
                         <button class="increment-btn minus" onclick="decrementField('markup')">−</button>
-                        <input type="number" id="markup" placeholder="0.00" step="0.01" inputmode="decimal" onfocus="clearRelatedFields('markup')">
+                        <input type="number" id="markup" placeholder="0.00" step="0.01" inputmode="decimal" oninput="clearRelatedFields('markup')">
                         <button class="increment-btn" onclick="incrementField('markup')">+</button>
                     </div>
                 </div>
@@ -395,7 +404,7 @@
                     <label><span class="field-number">4</span>Profit <span class="editable-indicator"></span></label>
                     <div class="input-wrapper">
                         <button class="increment-btn minus" onclick="decrementField('profit')">−</button>
-                        <input type="number" id="profit" placeholder="0.00" step="0.01" inputmode="decimal" onfocus="clearRelatedFields('profit')">
+                        <input type="number" id="profit" placeholder="0.00" step="0.01" inputmode="decimal" oninput="clearRelatedFields('profit')">
                         <button class="increment-btn" onclick="incrementField('profit')">+</button>
                     </div>
                 </div>
@@ -404,7 +413,7 @@
                     <label><span class="field-number">5</span>Price (no VAT) <span class="editable-indicator"></span></label>
                     <div class="input-wrapper">
                         <button class="increment-btn minus" onclick="decrementField('priceNoVat')">−</button>
-                        <input type="number" id="priceNoVat" placeholder="0.00" step="0.01" inputmode="decimal" onfocus="clearRelatedFields('priceNoVat')">
+                        <input type="number" id="priceNoVat" placeholder="0.00" step="0.01" inputmode="decimal" oninput="clearRelatedFields('priceNoVat')">
                         <button class="increment-btn" onclick="incrementField('priceNoVat')">+</button>
                     </div>
                 </div>
@@ -413,7 +422,7 @@
                     <label><span class="field-number">6</span>Price (with VAT) <span class="editable-indicator"></span></label>
                     <div class="input-wrapper">
                         <button class="increment-btn minus" onclick="decrementField('priceWithVat')">−</button>
-                        <input type="number" id="priceWithVat" placeholder="0.00" step="0.01" inputmode="decimal" onfocus="clearRelatedFields('priceWithVat')">
+                        <input type="number" id="priceWithVat" placeholder="0.00" step="0.01" inputmode="decimal" oninput="clearRelatedFields('priceWithVat')">
                         <button class="increment-btn" onclick="incrementField('priceWithVat')">+</button>
                     </div>
                 </div>
@@ -611,6 +620,9 @@
         }
 
         function incrementField(fieldId) {
+            // Clear related fields based on which field is being changed
+            clearRelatedFields(fieldId);
+            
             const field = document.getElementById(fieldId);
             const incrementValue = parseFloat(document.getElementById('incrementValue').value) || 0.1;
             const currentValue = parseFloat(field.value) || 0;
@@ -623,6 +635,9 @@
         }
 
         function decrementField(fieldId) {
+            // Clear related fields based on which field is being changed
+            clearRelatedFields(fieldId);
+            
             const field = document.getElementById(fieldId);
             const incrementValue = parseFloat(document.getElementById('incrementValue').value) || 0.1;
             const currentValue = parseFloat(field.value) || 0;
