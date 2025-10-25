@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pricing Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px 15px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            font-size: 26px;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            margin-bottom: 15px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 0;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #555;
+            font-size: 13px;
+        }
+
+        .field-number {
+            display: inline-block;
+            width: 22px;
+            height: 22px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 22px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 6px;
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .vat-wrapper {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .vat-wrapper select {
+            padding: 14px;
+            font-size: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            -webkit-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 20px;
+            padding-right: 40px;
+        }
+
+        .vat-wrapper select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .vat-wrapper input {
+            flex: 1;
+        }
+
+        .increment-btn {
+            width: 40px;
+            height: 48px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        .increment-btn:active {
+            transform: scale(0.95);
+            background: #5568d3;
+        }
+
+        .increment-btn.minus {
+            background: #e74c3c;
+        }
+
+        .increment-btn.minus:active {
+            background: #c0392b;
+        }
+
+        .preset-group {
+            background: #f8f9ff;
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .preset-group label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #667eea;
+            font-size: 14px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            transition: all 0.3s;
+            -webkit-appearance: none;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .input-group input.calculated {
+            background: #f8f9ff;
+            color: #667eea;
+            font-weight: 600;
+            border-color: #667eea;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            font-size: 17px;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 10px;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #555;
+        }
+
+        .btn-secondary:active {
+            background: #e0e0e0;
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .info-box {
+            background: #e8f4f8;
+            border-left: 4px solid #2196F3;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: #1565C0;
+        }
+
+        .summary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .summary h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            text-align: center;
+            opacity: 0.95;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .summary-item {
+            background: rgba(255,255,255,0.15);
+            padding: 12px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .summary-item.color-blue {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            color: #1565C0;
+        }
+
+        .summary-item.color-green {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            color: #2e7d32;
+        }
+
+        .summary-item.color-purple {
+            background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+            color: #6a1b9a;
+        }
+
+        .summary-item.color-orange {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            color: #e65100;
+        }
+
+        .summary-item.color-teal {
+            background: linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%);
+            color: #00695c;
+        }
+
+        .summary-item.color-pink {
+            background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 100%);
+            color: #c2185b;
+        }
+
+        .summary-item.color-indigo {
+            background: linear-gradient(135deg, #e8eaf6 0%, #c5cae9 100%);
+            color: #283593;
+        }
+
+        .summary-item label {
+            display: block;
+            font-size: 11px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .summary-item .value {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .editable-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #4CAF50;
+            border-radius: 50%;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💰 Pricing Calculator</h1>
+            <p>Edit any field to calculate the rest</p>
+        </div>
+
+        <div class="card">
+            <div class="info-box">
+                ℹ️ <strong>How to use:</strong> Enter Cost, then edit any ONE other field. All values will calculate automatically!
+            </div>
+
+            <div class="section-title">📊 Input Values</div>
+
+            <div class="preset-group">
+                <label>⚡ Quick Increment Value</label>
+                <input type="number" id="incrementValue" placeholder="Enter increment value" step="0.01" value="0.10" inputmode="decimal" style="width: 100%; padding: 12px; font-size: 16px; border: 2px solid #667eea; border-radius: 8px;">
+            </div>
+            
+            <div class="input-grid">
+                <div class="input-group">
+                    <label><span class="field-number">1</span>Cost <span class="editable-indicator"></span></label>
+                    <div class="input-wrapper">
+                        <button class="increment-btn minus" onclick="decrementField('cost')">−</button>
+                        <input type="number" id="cost" placeholder="Enter cost" step="0.01" inputmode="decimal">
+                        <button class="increment-btn" onclick="incrementField('cost')">+</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label><span class="field-number">2</span>Margin % <span class="editable-indicator"></span></label>
+                    <div class="input-wrapper">
+                        <button class="increment-btn minus" onclick="decrementField('margin')">−</button>
+                        <input type="number" id="margin" placeholder="0.00" step="0.01" inputmode="decimal">
+                        <button class="increment-btn" onclick="incrementField('margin')">+</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label><span class="field-number">3</span>Markup % <span class="editable-indicator"></span></label>
+                    <div class="input-wrapper">
+                        <button class="increment-btn minus" onclick="decrementField('markup')">−</button>
+                        <input type="number" id="markup" placeholder="0.00" step="0.01" inputmode="decimal">
+                        <button class="increment-btn" onclick="incrementField('markup')">+</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label><span class="field-number">4</span>Profit <span class="editable-indicator"></span></label>
+                    <div class="input-wrapper">
+                        <button class="increment-btn minus" onclick="decrementField('profit')">−</button>
+                        <input type="number" id="profit" placeholder="0.00" step="0.01" inputmode="decimal">
+                        <button class="increment-btn" onclick="incrementField('profit')">+</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label><span class="field-number">5</span>Price (no VAT) <span class="editable-indicator"></span></label>
+                    <div class="input-wrapper">
+                        <button class="increment-btn minus" onclick="decrementField('priceNoVat')">−</button>
+                        <input type="number" id="priceNoVat" placeholder="0.00" step="0.01" inputmode="decimal">
+                        <button class="increment-btn" onclick="incrementField('priceNoVat')">+</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label><span class="field-number">6</span>Price (with VAT) <span class="editable-indicator"></span></label>
+                    <div class="input-wrapper">
+                        <button class="increment-btn minus" onclick="decrementField('priceWithVat')">−</button>
+                        <input type="number" id="priceWithVat" placeholder="0.00" step="0.01" inputmode="decimal">
+                        <button class="increment-btn" onclick="incrementField('priceWithVat')">+</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>VAT % <span class="editable-indicator"></span></label>
+                    <div class="vat-wrapper">
+                        <select id="vatSelect" onchange="updateVatFromSelect()" style="width: 120px;">
+                            <option value="19">19%</option>
+                            <option value="5">5%</option>
+                            <option value="0">0%</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                        <div class="input-wrapper" style="flex: 1;">
+                            <button class="increment-btn minus" onclick="decrementField('vat')">−</button>
+                            <input type="number" id="vat" placeholder="0.00" step="0.01" value="19" inputmode="decimal" onchange="updateVatSelect()">
+                            <button class="increment-btn" onclick="incrementField('vat')">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-grid">
+                <button class="btn btn-primary" onclick="calculate()">🔄 Calculate</button>
+                <button class="btn btn-secondary" onclick="clearAll()">🗑️ Clear All</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="summary">
+                <h3>📋 Summary</h3>
+                <div class="summary-grid">
+                    <div class="summary-item color-blue">
+                        <label>COST</label>
+                        <div class="value" id="sumCost">-</div>
+                    </div>
+                    <div class="summary-item color-green">
+                        <label>PROFIT</label>
+                        <div class="value" id="sumProfit">-</div>
+                    </div>
+                    <div class="summary-item color-purple">
+                        <label>MARGIN %</label>
+                        <div class="value" id="sumMargin">-</div>
+                    </div>
+                    <div class="summary-item color-orange">
+                        <label>MARKUP %</label>
+                        <div class="value" id="sumMarkup">-</div>
+                    </div>
+                    <div class="summary-item color-teal">
+                        <label>PRICE (NO VAT)</label>
+                        <div class="value" id="sumPriceNoVat">-</div>
+                    </div>
+                    <div class="summary-item color-pink">
+                        <label>VAT %</label>
+                        <div class="value" id="sumVat">-</div>
+                    </div>
+                    <div class="summary-item color-indigo" style="grid-column: 1 / -1;">
+                        <label>FINAL PRICE (WITH VAT)</label>
+                        <div class="value" style="font-size: 24px;" id="sumPriceWithVat">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let lastEditedField = null;
+
+        function formatNumber(num) {
+            if (isNaN(num) || num === null) return '-';
+            return parseFloat(num).toFixed(2);
+        }
+
+        function getValues() {
+            return {
+                cost: parseFloat(document.getElementById('cost').value) || 0,
+                margin: parseFloat(document.getElementById('margin').value) || 0,
+                markup: parseFloat(document.getElementById('markup').value) || 0,
+                profit: parseFloat(document.getElementById('profit').value) || 0,
+                priceNoVat: parseFloat(document.getElementById('priceNoVat').value) || 0,
+                vat: parseFloat(document.getElementById('vat').value) || 0,
+                priceWithVat: parseFloat(document.getElementById('priceWithVat').value) || 0
+            };
+        }
+
+        function updateFields(values) {
+            document.getElementById('cost').value = values.cost !== 0 ? formatNumber(values.cost) : '';
+            document.getElementById('margin').value = values.margin !== 0 ? formatNumber(values.margin) : '';
+            document.getElementById('markup').value = values.markup !== 0 ? formatNumber(values.markup) : '';
+            document.getElementById('profit').value = values.profit !== 0 ? formatNumber(values.profit) : '';
+            document.getElementById('priceNoVat').value = values.priceNoVat !== 0 ? formatNumber(values.priceNoVat) : '';
+            document.getElementById('vat').value = formatNumber(values.vat);
+            document.getElementById('priceWithVat').value = values.priceWithVat !== 0 ? formatNumber(values.priceWithVat) : '';
+
+            updateSummary(values);
+        }
+
+        function updateSummary(values) {
+            document.getElementById('sumCost').textContent = formatNumber(values.cost);
+            document.getElementById('sumMargin').textContent = formatNumber(values.margin) + '%';
+            document.getElementById('sumMarkup').textContent = formatNumber(values.markup) + '%';
+            document.getElementById('sumProfit').textContent = formatNumber(values.profit);
+            document.getElementById('sumPriceNoVat').textContent = formatNumber(values.priceNoVat);
+            document.getElementById('sumVat').textContent = formatNumber(values.vat) + '%';
+            document.getElementById('sumPriceWithVat').textContent = formatNumber(values.priceWithVat);
+        }
+
+        function calculate() {
+            const v = getValues();
+            
+            if (v.cost === 0) {
+                alert('Please enter a Cost value first');
+                return;
+            }
+
+            let result = { ...v };
+            let calculated = false;
+
+            // Determine which field has a value to calculate from
+            // Priority: Price with VAT > Price no VAT > Profit > Markup > Margin
+            
+            if (v.priceWithVat > 0 && v.priceNoVat === 0) {
+                // Calculate from Price with VAT
+                result.priceNoVat = v.priceWithVat / (1 + (v.vat / 100));
+                result.profit = result.priceNoVat - v.cost;
+                result.margin = (result.profit / result.priceNoVat) * 100;
+                result.markup = (result.profit / v.cost) * 100;
+                calculated = true;
+            }
+            else if (v.priceNoVat > 0) {
+                // Calculate from Price without VAT
+                result.profit = v.priceNoVat - v.cost;
+                result.margin = (result.profit / v.priceNoVat) * 100;
+                result.markup = (result.profit / v.cost) * 100;
+                result.priceWithVat = v.priceNoVat * (1 + (v.vat / 100));
+                calculated = true;
+            }
+            else if (v.profit > 0) {
+                // Calculate from Profit
+                result.priceNoVat = v.cost + v.profit;
+                result.margin = (v.profit / result.priceNoVat) * 100;
+                result.markup = (v.profit / v.cost) * 100;
+                result.priceWithVat = result.priceNoVat * (1 + (v.vat / 100));
+                calculated = true;
+            }
+            else if (v.markup > 0) {
+                // Calculate from Markup
+                result.profit = v.cost * (v.markup / 100);
+                result.priceNoVat = v.cost + result.profit;
+                result.margin = (result.profit / result.priceNoVat) * 100;
+                result.priceWithVat = result.priceNoVat * (1 + (v.vat / 100));
+                calculated = true;
+            }
+            else if (v.margin > 0) {
+                // Calculate from Margin
+                result.priceNoVat = v.cost / (1 - (v.margin / 100));
+                result.profit = result.priceNoVat - v.cost;
+                result.markup = (result.profit / v.cost) * 100;
+                result.priceWithVat = result.priceNoVat * (1 + (v.vat / 100));
+                calculated = true;
+            }
+
+            if (calculated) {
+                updateFields(result);
+            } else {
+                alert('Please enter at least one value: Margin %, Markup %, Profit, or Price');
+            }
+        }
+
+        function clearAll() {
+            const currentVat = document.getElementById('vat').value;
+            const currentVatSelect = document.getElementById('vatSelect').value;
+            
+            document.getElementById('cost').value = '';
+            document.getElementById('margin').value = '';
+            document.getElementById('markup').value = '';
+            document.getElementById('profit').value = '';
+            document.getElementById('priceNoVat').value = '';
+            document.getElementById('priceWithVat').value = '';
+            
+            // Keep VAT values
+            document.getElementById('vat').value = currentVat;
+            document.getElementById('vatSelect').value = currentVatSelect;
+            
+            updateSummary({
+                cost: 0, margin: 0, markup: 0, profit: 0,
+                priceNoVat: 0, vat: parseFloat(currentVat) || 19, priceWithVat: 0
+            });
+        }
+
+        function incrementField(fieldId) {
+            const field = document.getElementById(fieldId);
+            const incrementValue = parseFloat(document.getElementById('incrementValue').value) || 0.1;
+            const currentValue = parseFloat(field.value) || 0;
+            field.value = (currentValue + incrementValue).toFixed(2);
+            
+            // Update VAT dropdown if VAT field changed
+            if (fieldId === 'vat') {
+                updateVatSelect();
+            }
+        }
+
+        function decrementField(fieldId) {
+            const field = document.getElementById(fieldId);
+            const incrementValue = parseFloat(document.getElementById('incrementValue').value) || 0.1;
+            const currentValue = parseFloat(field.value) || 0;
+            field.value = (currentValue - incrementValue).toFixed(2);
+            
+            // Update VAT dropdown if VAT field changed
+            if (fieldId === 'vat') {
+                updateVatSelect();
+            }
+        }
+
+        function updateVatFromSelect() {
+            const select = document.getElementById('vatSelect');
+            const vatInput = document.getElementById('vat');
+            
+            if (select.value === 'custom') {
+                vatInput.focus();
+            } else {
+                vatInput.value = select.value;
+            }
+        }
+
+        function updateVatSelect() {
+            const vatInput = document.getElementById('vat');
+            const select = document.getElementById('vatSelect');
+            const vatValue = parseFloat(vatInput.value);
+            
+            if (vatValue === 19) {
+                select.value = '19';
+            } else if (vatValue === 5) {
+                select.value = '5';
+            } else if (vatValue === 0) {
+                select.value = '0';
+            } else {
+                select.value = 'custom';
+            }
+        }
+
+        // Initialize
+        updateSummary({
+            cost: 0, margin: 0, markup: 0, profit: 0,
+            priceNoVat: 0, vat: 19, priceWithVat: 0
+        });
+    </script>
+</body>
+</html>
